@@ -6,7 +6,8 @@ FROM alpine
 MAINTAINER kev <noreply@datageek.info>
 
 ARG SS_VER=3.1.0
-ARG SS_URL=https://github.com/shadowsocks/shadowsocks-libev/releases/download/v$SS_VER/shadowsocks-libev-$SS_VER.tar.gz
+ARG SS_URL=https://github.com/reggiezhang/ss-verbose/archive/v$SS_VER.tar.gz
+
 
 ENV SERVER_ADDR 0.0.0.0
 ENV SERVER_PORT 8388

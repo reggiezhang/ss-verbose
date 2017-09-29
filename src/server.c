@@ -669,7 +669,14 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
     if (r == 0) {
         // connection closed
         if (verbose) {
-            LOGI("server_recv close the connection");
+            char *peer_name;
+            peer_name = get_peer_name(fd);
+            if (peer_name != NULL) {
+                LOGI("server_recv close the connection from %s", peer_name);
+            }
+            else {
+                LOGI("server_recv close the connection");
+            }
         }
         close_and_free_remote(EV_A_ remote);
         close_and_free_server(EV_A_ server);
@@ -1465,7 +1472,7 @@ accept_cb(EV_P_ ev_io *w, int revents)
     setnonblocking(serverfd);
 
     if (verbose) {
-        LOGI("accept a connection");
+        LOGI("accept a connection from %s", peer_name);
     }
 
     server_t *server = new_server(serverfd, listener);
