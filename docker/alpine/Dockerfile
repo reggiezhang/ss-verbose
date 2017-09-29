@@ -5,7 +5,7 @@
 FROM alpine
 MAINTAINER kev <noreply@datageek.info>
 
-ARG SS_VER=3.1.0
+ARG SS_VER=3.1.0-verbose
 ARG SS_URL=https://github.com/reggiezhang/ss-verbose/archive/v$SS_VER.tar.gz
 
 
