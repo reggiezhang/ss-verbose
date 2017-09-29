@@ -670,7 +670,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
         // connection closed
         if (verbose) {
             char *peer_name;
-            peer_name = get_peer_name(fd);
+            peer_name = get_peer_name(server->fd);
             if (peer_name != NULL) {
                 LOGI("server_recv close the connection from %s", peer_name);
             }
