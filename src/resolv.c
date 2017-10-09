@@ -293,68 +293,69 @@ CLEANUP:
     }
 }
 
-static void
-dns_query_v6_cb(void *arg, int status, int timeouts, struct hostent *he)
-{
-    int i, n;
-    struct resolv_query *query = (struct resolv_query *)arg;
+// static void
+// dns_query_v6_cb(void *arg, int status, int timeouts, struct hostent *he)
+// {
+//     int i, n;
+//     struct resolv_query *query = (struct resolv_query *)arg;
 
-    if (status == ARES_EDESTRUCTION) {
-        return;
-    }
+//     if (status == ARES_EDESTRUCTION) {
+//         return;
+//     }
 
-    if(!he || status != ARES_SUCCESS){
-        if (verbose) {
-            LOGI("failed to lookup v6 address %s", ares_strerror(status));
-        }
-        goto CLEANUP;
-    }
+//     if(!he || status != ARES_SUCCESS){
+//         if (verbose) {
+//             LOGI("failed to lookup v6 address %s", ares_strerror(status));
+//         }
+//         goto CLEANUP;
+//     }
 
-    if (verbose) {
-        LOGI("found address name v6 address %s", he->h_name);
-    }
+//     if (verbose) {
+//         LOGI("found address name v6 address %s", he->h_name);
+//     }
 
-    n = 0;
-    while (he->h_addr_list[n]) {
-        n++;
-    }
+//     n = 0;
+//     while (he->h_addr_list[n]) {
+//         n++;
+//     }
 
-    if (n > 0) {
-        struct sockaddr **new_responses = ss_realloc(query->responses,
-                (query->response_count + n)
-                * sizeof(struct sockaddr *));
+//     if (n > 0) {
+//         struct sockaddr **new_responses = ss_realloc(query->responses,
+//                 (query->response_count + n)
+//                 * sizeof(struct sockaddr *));
 
-        if (new_responses == NULL) {
-            LOGE("failed to allocate memory for additional DNS responses");
-        } else {
-            query->responses = new_responses;
+//         if (new_responses == NULL) {
+//             LOGE("failed to allocate memory for additional DNS responses");
+//         } else {
+//             query->responses = new_responses;
 
-            for (i = 0; i < n; i++) {
-                struct sockaddr_in6 *sa = ss_malloc(sizeof(struct sockaddr_in6));
-                memset(sa, 0, sizeof(struct sockaddr_in6));
-                sa->sin6_family = AF_INET6;
-                sa->sin6_port   = query->port;
-                memcpy(&sa->sin6_addr, he->h_addr_list[i], he->h_length);
+//             for (i = 0; i < n; i++) {
+//                 struct sockaddr_in6 *sa = ss_malloc(sizeof(struct sockaddr_in6));
+//                 memset(sa, 0, sizeof(struct sockaddr_in6));
+//                 sa->sin6_family = AF_INET6;
+//                 sa->sin6_port   = query->port;
+//                 memcpy(&sa->sin6_addr, he->h_addr_list[i], he->h_length);
 
-                query->responses[query->response_count] = (struct sockaddr*)sa;
-                if (query->responses[query->response_count] == NULL) {
-                    LOGE("failed to allocate memory for DNS query result address");
-                } else {
-                    query->response_count++;
-                }
-            }
-        }
-    }
+//                 query->responses[query->response_count] = (struct sockaddr*)sa;
+//                 if (query->responses[query->response_count] == NULL) {
+//                     LOGE("failed to allocate memory for DNS query result address");
+//                 } else {
+//                     query->response_count++;
+//                 }
+//             }
+//         }
+//     }
 
-CLEANUP:
+// CLEANUP:
 
-    query->requests[1] = 0; /* mark A query as being completed */
+//     query->requests[1] = 0; /* mark A query as being completed */
 
-    /* Once all requests have completed, call client callback */
-    if (all_requests_are_null(query)) {
-        return process_client_callback(query);
-    }
-}
+//     /* Once all requests have completed, call client callback */
+//     if (all_requests_are_null(query)) {
+//         return process_client_callback(query);
+//     }
+// }
+
 
 /*
  * Called once all requests have been completed
