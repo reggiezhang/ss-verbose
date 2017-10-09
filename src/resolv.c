@@ -99,7 +99,7 @@ static void resolv_timeout_cb(struct ev_loop *, struct ev_timer *, int);
 static void resolv_sock_state_cb(void *, int, int, int);
 
 static void dns_query_v4_cb(void *, int, int, struct hostent *);
-static void dns_query_v6_cb(void *, int, int, struct hostent *);
+// static void dns_query_v6_cb(void *, int, int, struct hostent *);
 
 static void process_client_callback(struct resolv_query *);
 static inline int all_requests_are_null(struct resolv_query *);
