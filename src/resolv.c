@@ -216,7 +216,8 @@ resolv_start(const char *hostname, uint16_t port,
     query->free_cb        = free_cb;
 
     query->requests[0]   = AF_INET;
-    query->requests[1]   = AF_INET6;
+    // query->requests[1]   = AF_INET6;
+    query->requests[1]   = 0;
 
     ares_gethostbyname(default_ctx.channel, hostname, AF_INET,  dns_query_v4_cb, query);
     // ares_gethostbyname(default_ctx.channel, hostname, AF_INET6, dns_query_v6_cb, query);
