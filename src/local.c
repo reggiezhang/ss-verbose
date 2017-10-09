@@ -721,6 +721,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                 else {
 #ifndef __ANDROID__
                     if (atyp == 3) {            // resolve domain so we can bypass domain with geoip
+                        LOGI("resolving %s:%s", host, port);
                         err = get_sockaddr(host, port, &storage, 0, ipv6first);
                         if (err != -1) {
                             resolved = 1;
@@ -739,6 +740,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                                     break;
                             }
                         }
+                        LOGI("resolved %s:%s to %s", host, port, ip);
                     }
 #endif
                     int ip_match = acl_match_host(ip);
