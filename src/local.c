@@ -155,7 +155,7 @@ int update_dns_cache_list(char *addr, char *ip)
         char *data = ss_malloc(INET6_ADDRSTRLEN);
         memset(data, 0, sizeof(INET6_ADDRSTRLEN));
         memcpy(data, ip, INET6_ADDRSTRLEN);
-        cache_insert(block_list, addr, addr_len, data);
+        cache_insert(dns_cache_list, addr, addr_len, data);
     }
     return 0;
 }
@@ -164,10 +164,10 @@ int check_dns_cache_list(char *addr, char *ip)
 {
     size_t addr_len = strlen(addr);
 
-    if (cache_key_exist(block_list, addr, addr_len))
+    if (cache_key_exist(dns_cache_list, addr, addr_len))
     {
         void *data = NULL;
-        cache_lookup(block_list, addr, addr_len, &data);
+        cache_lookup(dns_cache_list, addr, addr_len, &data);
 
         if (data != NULL)
         {
