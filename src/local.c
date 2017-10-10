@@ -137,6 +137,48 @@ static server_t *new_server(int fd);
 
 static struct cork_dllist connections;
 
+
+
+static struct cache *dns_cache_list;
+
+void init_dns_cache_list()
+{
+    cache_create(&dns_cache_list, 512, NULL);
+}
+
+int update_dns_cache_list(char *addr, char *ip)
+{
+    size_t addr_len = strlen(addr);
+
+    if (!cache_key_exist(dns_cache_list, addr, addr_len))
+    {
+        char *data = ss_malloc(INET6_ADDRSTRLEN);
+        memset(data, 0, sizeof(INET6_ADDRSTRLEN));
+        memcpy(data, ip, INET6_ADDRSTRLEN);
+        cache_insert(block_list, addr, addr_len, data);
+    }
+    return 0;
+}
+
+int check_dns_cache_list(char *addr, char *ip)
+{
+    size_t addr_len = strlen(addr);
+
+    if (cache_key_exist(block_list, addr, addr_len))
+    {
+        void *data = NULL;
+        cache_lookup(block_list, addr, addr_len, &data);
+
+        if (data != NULL)
+        {
+            memcpy(ip, data, INET6_ADDRSTRLEN);
+            LOGI("hit cache: %s to %s", addr, ip);
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int
 setnonblocking(int fd)
 {
@@ -721,11 +763,12 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                 else {
 #ifndef __ANDROID__
                     if (atyp == 3) {            // resolve domain so we can bypass domain with geoip
-                        LOGI("resolving %s:%s", host, port);
-                        err = get_sockaddr(host, port, &storage, 0, ipv6first);
-                        if (err != -1) {
-                            resolved = 1;
-                            switch(((struct sockaddr*)&storage)->sa_family) {
+                        if (!check_dns_cache_list(host, ip)) {
+                            LOGI("resolving %s:%s", host, port);
+                            err = get_sockaddr(host, port, &storage, 0, ipv6first);
+                            if (err != -1) {
+                                resolved = 1;
+                                switch(((struct sockaddr*)&storage)->sa_family) {
                                 case AF_INET: {
                                     struct sockaddr_in *addr_in = (struct sockaddr_in *)&storage;
                                     inet_ntop(AF_INET, &(addr_in->sin_addr), ip, INET_ADDRSTRLEN);
@@ -738,9 +781,11 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                                 }
                                 default:
                                     break;
+                                }
+                                update_dns_cache_list(host, ip);
                             }
+                            LOGI("resolved %s:%s to %s", host, port, ip);
                         }
-                        LOGI("resolved %s:%s to %s", host, port, ip);
                     }
 #endif
                     int ip_match = acl_match_host(ip);
@@ -1690,6 +1735,9 @@ main(int argc, char **argv)
     if (geteuid() == 0) {
         LOGI("running from root user");
     }
+
+    // Init dns cache
+    init_dns_cache_list();
 
     // Init connections
     cork_dllist_init(&connections);
