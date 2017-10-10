@@ -790,7 +790,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                                 update_dns_cache_list(host, ip);
                             }
                             if (verbose) {
-                                LOGI("resolved: %s => %s", host, port, ip);
+                                LOGI("resolved: %s => %s", host, ip);
                             }
                         }
                     }
