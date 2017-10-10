@@ -143,7 +143,7 @@ static struct cache *dns_cache_list;
 
 void init_dns_cache_list()
 {
-    cache_create(&dns_cache_list, 512, NULL);
+    cache_create(&dns_cache_list, 10240, NULL);
 }
 
 int update_dns_cache_list(char *addr, char *ip)
@@ -172,7 +172,10 @@ int check_dns_cache_list(char *addr, char *ip)
         if (data != NULL)
         {
             memcpy(ip, data, INET6_ADDRSTRLEN);
-            LOGI("hit cache: %s to %s", addr, ip);
+            if (verbose) {
+                LOGI("cache hit: %s => %s", addr, ip);
+            }
+
             return 1;
         }
     }
@@ -764,7 +767,9 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
 #ifndef __ANDROID__
                     if (atyp == 3) {            // resolve domain so we can bypass domain with geoip
                         if (!check_dns_cache_list(host, ip)) {
-                            LOGI("resolving %s:%s", host, port);
+                            if (verbose) {
+                                LOGI("resolving: %s", host);
+                            }
                             err = get_sockaddr(host, port, &storage, 0, ipv6first);
                             if (err != -1) {
                                 resolved = 1;
@@ -784,7 +789,9 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                                 }
                                 update_dns_cache_list(host, ip);
                             }
-                            LOGI("resolved %s:%s to %s", host, port, ip);
+                            if (verbose) {
+                                LOGI("resolved: %s => %s", host, port, ip);
+                            }
                         }
                     }
 #endif
