@@ -1462,7 +1462,7 @@ main(int argc, char **argv)
         case 'v':
             verbose = 1;
             break;
-        case 'w';
+        case 'w':
             use_syslog = 1;
             break;
         case 'h':
