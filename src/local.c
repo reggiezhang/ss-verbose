@@ -1602,7 +1602,7 @@ main(int argc, char **argv)
     if (local_addr == NULL) {
         local_addr = "127.0.0.1";
     }
-
+    use_syslog = 1;
     USE_SYSLOG(argv[0], pid_flags);
     if (pid_flags) {
         daemonize(pid_path);
