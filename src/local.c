@@ -1462,6 +1462,9 @@ main(int argc, char **argv)
         case 'v':
             verbose = 1;
             break;
+        case 'w';
+            use_syslog = 1;
+            break;
         case 'h':
         case GETOPT_VAL_HELP:
             usage();
@@ -1602,7 +1605,7 @@ main(int argc, char **argv)
     if (local_addr == NULL) {
         local_addr = "127.0.0.1";
     }
-    use_syslog = 1;
+
     USE_SYSLOG(argv[0], pid_flags);
     if (pid_flags) {
         daemonize(pid_path);
