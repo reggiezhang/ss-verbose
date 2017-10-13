@@ -753,8 +753,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
 #endif
                     ) {
                 // check outbound block list
-                int block_match = outbound_block_match_host(host);
-                if (block_match > 0) {
+                if (outbound_block_match_host(host) == 1) {
                     if (verbose) {
                         LOGI("blocked: %s", host);
                     }
