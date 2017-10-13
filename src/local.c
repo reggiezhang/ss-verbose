@@ -752,6 +752,15 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                     && !(vpn && strcmp(port, "53") == 0)
 #endif
                     ) {
+                // check outbound block list
+                int block_match = outbound_block_match_host(host);
+                if (block_match > 0) {
+                    if (verbose) {
+                        LOGI("blocked: %s", host);
+                    }
+                    close_and_free_server(EV_A_ server);
+                    return;
+                }
                 int host_match = acl_match_host(host);
                 int bypass = 0;
                 int resolved = 0;
