@@ -1,17 +1,11 @@
-# shadowsocks-libev
+# ss-verbose
 
 ## Intro
 
-[Shadowsocks-libev](https://shadowsocks.org) is a lightweight secured SOCKS5
-proxy for embedded devices and low-end boxes.
+Based on [shadowsocks-libev](https://github.com/shadowsocks/shadowsocks-libev)
 
-It is a port of [Shadowsocks](https://github.com/shadowsocks/shadowsocks)
-created by [@clowwindy](https://github.com/clowwindy), and maintained by
-[@madeye](https://github.com/madeye) and [@linusyang](https://github.com/linusyang).
 
 Current version: 3.1.0 | [Changelog](debian/changelog)
-
-Travis CI: [![Travis CI](https://travis-ci.org/shadowsocks/shadowsocks-libev.svg?branch=master)](https://travis-ci.org/shadowsocks/shadowsocks-libev)
 
 ## Features
 - ss-local
