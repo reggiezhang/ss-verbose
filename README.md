@@ -1,11 +1,5 @@
-# ss-verbose
-
-## Intro
-
-Based on [shadowsocks-libev](https://github.com/shadowsocks/shadowsocks-libev)
-
-
-Current version: 3.1.0 | [Changelog](debian/changelog)
+## ss-verbose
+Based on [shadowsocks-libev-3.1.0.tar.gz](https://github.com/shadowsocks/shadowsocks-libev/releases/download/v3.1.0/shadowsocks-libev-3.1.0.tar.gz)
 
 ## Features
 - ss-local
