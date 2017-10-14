@@ -810,11 +810,11 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                 if (bypass) {
                     if (verbose) {
                         if (sni_detected || atyp == 3)
-                            LOGI("bypass: %s:%s", host, port);
+                            LOGI("bypass(%d): %s:%s", host_match, host, port);
                         else if (atyp == 1)
-                            LOGI("bypass: %s:%s", ip, port);
+                            LOGI("bypass(%d): %s:%s", host_match, ip, port);
                         else if (atyp == 4)
-                            LOGI("bypass: [%s]:%s", ip, port);
+                            LOGI("bypass(%d): [%s]:%s", host_match, ip, port);
                     }
 #ifndef __ANDROID__
                     if (atyp == 3 && resolved != 1)
@@ -830,11 +830,11 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                 } else {
                     if (verbose) {
                         if (sni_detected || atyp == 3)
-                            LOGI("proxying: %s:%s", host, port);
+                            LOGI("proxying(%d): %s:%s", host_match, host, port);
                         else if (atyp == 1)
-                            LOGI("proxying: %s:%s", ip, port);
+                            LOGI("proxying(%d): %s:%s", host_match, ip, port);
                         else if (atyp == 4)
-                            LOGI("proxying: [%s]:%s", ip, port);
+                            LOGI("proxying(%d): [%s]:%s", host_match, ip, port);
                     }
                 }
             }
