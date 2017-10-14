@@ -755,9 +755,9 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                 int err;
 
                 if (host_match > 0)
-                    bypass = 1;                 // bypass hostnames in black list
+                    bypass = 1;                 // bypass hostnames in black list (bypass list)
                 else if (host_match < 0)
-                    bypass = 0;                 // proxy hostnames in white list
+                    bypass = 0;                 // proxy hostnames in white list (proxy list)
                 else {
 #ifndef __ANDROID__
                     if (atyp == 3) {            // resolve domain so we can bypass domain with geoip
@@ -783,10 +783,13 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                                     break;
                                 }
                                 update_dns_cache_list(host, ip);
+                                if (verbose) {
+                                    LOGI("resolved: %s => %s", host, ip);
+                                }
+                            } else {
+                                LOGE("resolve failed: %s", host);
                             }
-                            if (verbose) {
-                                LOGI("resolved: %s => %s", host, ip);
-                            }
+
                         }
                     }
 #endif
@@ -794,12 +797,12 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                     switch (get_acl_mode()) {
                         case BLACK_LIST:
                             if (ip_match > 0)
-                                bypass = 1;               // bypass IPs in black list
+                                bypass = 1;               // bypass IPs in black list (bypass list)
                             break;
                         case WHITE_LIST:
                             bypass = 1;
                             if (ip_match < 0)
-                                bypass = 0;               // proxy IPs in white list
+                                bypass = 0;               // proxy IPs in white list (proxy list)
                             break;
                     }
                 }
@@ -807,11 +810,11 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                 if (bypass) {
                     if (verbose) {
                         if (sni_detected || atyp == 3)
-                            LOGI("bypass %s:%s", host, port);
+                            LOGI("bypass: %s:%s", host, port);
                         else if (atyp == 1)
-                            LOGI("bypass %s:%s", ip, port);
+                            LOGI("bypass: %s:%s", ip, port);
                         else if (atyp == 4)
-                            LOGI("bypass [%s]:%s", ip, port);
+                            LOGI("bypass: [%s]:%s", ip, port);
                     }
 #ifndef __ANDROID__
                     if (atyp == 3 && resolved != 1)
@@ -823,6 +826,15 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                         remote = create_remote(server->listener, (struct sockaddr *)&storage);
                         if (remote != NULL)
                             remote->direct = 1;
+                    }
+                } else {
+                    if (verbose) {
+                        if (sni_detected || atyp == 3)
+                            LOGI("proxying: %s:%s", host, port);
+                        else if (atyp == 1)
+                            LOGI("proxying: %s:%s", ip, port);
+                        else if (atyp == 4)
+                            LOGI("proxying: [%s]:%s", ip, port);
                     }
                 }
             }
