@@ -199,6 +199,10 @@ create_and_bind(const char *addr, const char *port)
     struct addrinfo *result, *rp;
     int s, listen_sock;
 
+    if (verbose) {
+        LOGI("create_and_bind");
+    }
+
     memset(&hints, 0, sizeof(struct addrinfo));
     hints.ai_family   = AF_UNSPEC;   /* Return IPv4 and IPv6 choices */
     hints.ai_socktype = SOCK_STREAM; /* We want a TCP socket */
@@ -257,6 +261,11 @@ launch_or_create(const char *addr, const char *port)
 {
     int *fds;
     size_t cnt;
+
+    if (verbose) {
+        LOGI("launch_or_create");
+    }
+
     int error = launch_activate_socket("Listeners", &fds, &cnt);
     if (error == 0) {
         if (cnt == 1) {
@@ -357,9 +366,6 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
 
             // insert shadowsocks header
             if (!remote->direct) {
-#ifdef __ANDROID__
-                tx += remote->buf->len;
-#endif
                 int err = crypto->encrypt(remote->buf, server->e_ctx, BUF_SIZE);
 
                 if (err) {
@@ -378,25 +384,6 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
             }
 
             if (!remote->send_ctx->connected) {
-#ifdef __ANDROID__
-                if (vpn) {
-                    int not_protect = 0;
-                    if (remote->addr.ss_family == AF_INET) {
-                        struct sockaddr_in *s = (struct sockaddr_in *)&remote->addr;
-                        if (s->sin_addr.s_addr == inet_addr("127.0.0.1"))
-                            not_protect = 1;
-                    }
-                    if (!not_protect) {
-                        if (protect_socket(remote->fd) == -1) {
-                            ERROR("protect_socket");
-                            close_and_free_remote(EV_A_ remote);
-                            close_and_free_server(EV_A_ server);
-                            return;
-                        }
-                    }
-                }
-#endif
-
                 remote->buf->idx = 0;
 
                 if (!fast_open || remote->direct) {
