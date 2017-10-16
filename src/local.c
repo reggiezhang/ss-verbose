@@ -761,7 +761,9 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                 else {
 #ifndef __ANDROID__
                     if (atyp == 3) {            // resolve domain so we can bypass domain with geoip
-                        if (!check_dns_cache_list(host, ip)) {
+                        if (check_dns_cache_list(host, ip)) {
+                            resolved = 1;
+                        } else {
                             if (verbose) {
                                 LOGI("resolving: %s", host);
                             }
