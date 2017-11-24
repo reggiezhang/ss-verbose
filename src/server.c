@@ -1154,8 +1154,8 @@ remote_recv_cb(EV_P_ ev_io *w, int revents)
         int opt = 0;
         setsockopt(server->fd, SOL_TCP, TCP_NODELAY, &opt, sizeof(opt));
         setsockopt(remote->fd, SOL_TCP, TCP_NODELAY, &opt, sizeof(opt));
-        remote->recv_ctx->connected = 1;
     }
+    remote->recv_ctx->connected = 1;
 }
 
 static void
@@ -1686,6 +1686,9 @@ main(int argc, char **argv)
         if (mptcp == 0) {
             mptcp = conf->mptcp;
         }
+        if (no_delay == 0) {
+            no_delay = conf->no_delay;
+        }
         if (reuse_port == 0) {
             reuse_port = conf->reuse_port;
         }
@@ -1776,6 +1779,10 @@ main(int argc, char **argv)
 
     if (mode == UDP_ONLY) {
         LOGI("TCP relay disabled");
+    }
+
+    if (no_delay) {
+        LOGI("enable TCP no-delay");
     }
 
     // ignore SIGPIPE

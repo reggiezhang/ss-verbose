@@ -613,6 +613,8 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                 }
             }
 
+            server->stage = STAGE_PARSE;
+
             char host[257], ip[INET6_ADDRSTRLEN], port[16];
 
             buffer_t *abuf = server->abuf;
@@ -692,7 +694,6 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                     ret = tls_protocol->parse_packet(buf->data + 3 + abuf->len,
                                                      buf->len - 3 - abuf->len, &hostname);
                 if (ret == -1 && buf->len < BUF_SIZE) {
-                    server->stage = STAGE_PARSE;
                     return;
                 } else if (ret > 0) {
                     sni_detected = 1;
@@ -1018,8 +1019,8 @@ remote_recv_cb(EV_P_ ev_io *w, int revents)
         int opt = 0;
         setsockopt(server->fd, SOL_TCP, TCP_NODELAY, &opt, sizeof(opt));
         setsockopt(remote->fd, SOL_TCP, TCP_NODELAY, &opt, sizeof(opt));
-        remote->recv_ctx->connected = 1;
     }
+    remote->recv_ctx->connected = 1;
 }
 
 static void
@@ -1559,6 +1560,9 @@ main(int argc, char **argv)
         if (mptcp == 0) {
             mptcp = conf->mptcp;
         }
+        if (no_delay == 0) {
+            no_delay = conf->no_delay;
+        }
 #ifdef HAVE_SETRLIMIT
         if (nofile == 0) {
             nofile = conf->nofile;
@@ -1627,6 +1631,10 @@ main(int argc, char **argv)
         LOGE("tcp fast open is not supported by this environment");
         fast_open = 0;
 #endif
+    }
+
+    if (no_delay) {
+        LOGI("enable TCP no-delay");
     }
 
     if (ipv6first) {

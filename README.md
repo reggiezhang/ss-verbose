@@ -1,5 +1,5 @@
 ## ss-verbose
-Based on [shadowsocks-libev-3.1.0.tar.gz](https://github.com/shadowsocks/shadowsocks-libev/releases/download/v3.1.0/shadowsocks-libev-3.1.0.tar.gz)
+Based on [shadowsocks-libev-3.1.1.tar.gz](https://github.com/shadowsocks/shadowsocks-libev/releases/download/v3.1.1/shadowsocks-libev-3.1.1.tar.gz)
 
 ## Features
 - ss-local
