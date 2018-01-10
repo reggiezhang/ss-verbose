@@ -188,7 +188,7 @@ resolv_shutdown(struct ev_loop *loop)
     ares_library_cleanup();
 }
 
-struct resolv_query *
+void
 resolv_start(const char *hostname, uint16_t port,
              void (*client_cb)(struct sockaddr *, void *),
              void (*free_cb)(void *), void *data)
@@ -196,13 +196,7 @@ resolv_start(const char *hostname, uint16_t port,
     /*
      * Wrap c-ares's call back in our own
      */
-
     struct resolv_query *query = ss_malloc(sizeof(struct resolv_query));
-
-    if (query == NULL) {
-        LOGE("failed to allocate memory for DNS query callback data.");
-        return NULL;
-    }
 
     memset(query, 0, sizeof(struct resolv_query));
 
@@ -220,8 +214,6 @@ resolv_start(const char *hostname, uint16_t port,
     ares_gethostbyname(default_ctx.channel, hostname, AF_INET6, dns_query_v6_cb, query);
 
     reset_timer();
-
-    return query;
 }
 
 /*

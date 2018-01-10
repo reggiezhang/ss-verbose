@@ -506,31 +506,35 @@ connect_to_remote(EV_P_ struct addrinfo *res,
 
     remote_t *remote = new_remote(sockfd);
 
-#ifdef TCP_FASTOPEN
     if (fast_open) {
-#ifdef __APPLE__
+        int s = -1;
+#if defined(MSG_FASTOPEN) && !defined(TCP_FASTOPEN_CONNECT)
+        s = sendto(sockfd, server->buf->data, server->buf->len,
+                MSG_FASTOPEN, res->ai_addr, res->ai_addrlen);
+#else
+#if defined(TCP_FASTOPEN_CONNECT)
+        int optval = 1;
+        if(setsockopt(sockfd, IPPROTO_TCP, TCP_FASTOPEN_CONNECT,
+                    (void *)&optval, sizeof(optval)) < 0)
+            FATAL("failed to set TCP_FASTOPEN_CONNECT");
+        s = connect(sockfd, res->ai_addr, res->ai_addrlen);
+#elif defined(CONNECT_DATA_IDEMPOTENT)
         ((struct sockaddr_in *)(res->ai_addr))->sin_len = sizeof(struct sockaddr_in);
         sa_endpoints_t endpoints;
         memset((char *)&endpoints, 0, sizeof(endpoints));
         endpoints.sae_dstaddr    = res->ai_addr;
         endpoints.sae_dstaddrlen = res->ai_addrlen;
 
-        struct iovec iov;
-        iov.iov_base = server->buf->data;
-        iov.iov_len  = server->buf->len;
-        size_t len;
-        int s = connectx(sockfd, &endpoints, SAE_ASSOCID_ANY, CONNECT_DATA_IDEMPOTENT,
-                         &iov, 1, &len, NULL);
-        if (s == 0) {
-            s = len;
-        }
+        s = connectx(sockfd, &endpoints, SAE_ASSOCID_ANY, CONNECT_DATA_IDEMPOTENT,
+                         NULL, 0, NULL, NULL);
 #else
-        ssize_t s = sendto(sockfd, server->buf->data, server->buf->len,
-                           MSG_FASTOPEN, res->ai_addr, res->ai_addrlen);
+        FATAL("fast open is not enabled in this build");
+#endif
+        if (s == 0)
+            s = send(sockfd, server->buf->data, server->buf->len, 0);
 #endif
         if (s == -1) {
-            if (errno == CONNECT_IN_PROGRESS || errno == EAGAIN
-                || errno == EWOULDBLOCK) {
+            if (errno == CONNECT_IN_PROGRESS) {
                 // The remote server doesn't support tfo or it's the first connection to the server.
                 // It will automatically fall back to conventional TCP.
             } else if (errno == EOPNOTSUPP || errno == EPROTONOSUPPORT ||
@@ -539,14 +543,13 @@ connect_to_remote(EV_P_ struct addrinfo *res,
                 fast_open = 0;
                 LOGE("fast open is not supported on this platform");
             } else {
-                ERROR("sendto");
+                ERROR("fast_open_connect");
             }
         } else {
             server->buf->idx += s;
             server->buf->len -= s;
         }
     }
-#endif
 
     if (!fast_open) {
         int r = connect(sockfd, res->ai_addr, res->ai_addrlen);
@@ -900,6 +903,8 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                 ev_io_start(EV_A_ & remote->send_ctx->io);
             }
         } else {
+            ev_io_stop(EV_A_ & server_recv_ctx->io);
+
             query_t *query = ss_malloc(sizeof(query_t));
             memset(query, 0, sizeof(query_t));
             query->server = server;
@@ -907,18 +912,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
             snprintf(query->hostname, 256, "%s", host);
 
             server->stage = STAGE_RESOLVE;
-            struct resolv_query *q = resolv_start(host, port,
-                                                  resolv_cb, resolv_free_cb, query);
-
-            if (q == NULL) {
-                if (query != NULL)
-                    ss_free(query);
-                server->query = NULL;
-                close_and_free_server(EV_A_ server);
-                return;
-            }
-
-            ev_io_stop(EV_A_ & server_recv_ctx->io);
+            resolv_start(host, port, resolv_cb, resolv_free_cb, query);
         }
 
         return;
@@ -1842,6 +1836,11 @@ main(int argc, char **argv)
                 host = "127.0.0.1";
             }
 
+            if (host && strcmp(host, ":") > 0)
+                LOGI("tcp server listening at [%s]:%s", host, server_port);
+            else
+                LOGI("tcp server listening at %s:%s", host ? host : "0.0.0.0", server_port);
+
             // Bind to port
             int listenfd;
             listenfd = create_and_bind(host, server_port, mptcp);
@@ -1864,11 +1863,6 @@ main(int argc, char **argv)
             ev_io_init(&listen_ctx->io, accept_cb, listenfd, EV_READ);
             ev_io_start(loop, &listen_ctx->io);
 
-            if (host && strcmp(host, ":") > 0)
-                LOGI("tcp server listening at [%s]:%s", host, server_port);
-            else
-                LOGI("tcp server listening at %s:%s", host ? host : "0.0.0.0", server_port);
-
             if (plugin != NULL)
                 break;
         }
@@ -1881,12 +1875,12 @@ main(int argc, char **argv)
             if (plugin != NULL) {
                 port = plugin_port;
             }
-            // Setup UDP
-            init_udprelay(host, port, mtu, crypto, atoi(timeout), iface);
             if (host && strcmp(host, ":") > 0)
                 LOGI("udp server listening at [%s]:%s", host, port);
             else
                 LOGI("udp server listening at %s:%s", host ? host : "0.0.0.0", port);
+            // Setup UDP
+            init_udprelay(host, port, mtu, crypto, atoi(timeout), iface);
         }
     }
 
