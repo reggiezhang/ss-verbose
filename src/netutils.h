@@ -25,26 +25,26 @@
 
 #include <sys/socket.h>
 
-#if defined(__linux__)
-#include <netdb.h>
-#else
+#ifdef HAVE_LINUX_TCP_H
+#include <linux/tcp.h>
+#elif defined(HAVE_NETINET_TCP_H)
 #include <netinet/tcp.h>
 #endif
 
-// only enable TCP_FASTOPEN on linux
-#if defined(__linux__)
-#include <linux/tcp.h>
-/*  conditional define for TCP_FASTOPEN */
+#ifdef HAVE_NETDB_H
+#include <netdb.h>
+#endif
+
+/* Hard coded defines for TCP fast open on Android */
+#ifdef __ANDROID__
 #ifndef TCP_FASTOPEN
 #define TCP_FASTOPEN   23
 #endif
-/*  conditional define for MSG_FASTOPEN */
 #ifndef MSG_FASTOPEN
 #define MSG_FASTOPEN   0x20000000
 #endif
-#elif !defined(__APPLE__)
-#ifdef TCP_FASTOPEN
-#undef TCP_FASTOPEN
+#ifdef TCP_FASTOPEN_CONNECT
+#undef TCP_FASTOPEN_CONNECT
 #endif
 #endif
 

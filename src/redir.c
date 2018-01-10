@@ -348,6 +348,8 @@ delayed_connect_cb(EV_P_ ev_timer *watcher, int revents)
     int r = connect(remote->fd, remote->addr,
                     get_sockaddr_len(remote->addr));
 
+    remote->addr = NULL;
+
     if (r == -1 && errno != CONNECT_IN_PROGRESS) {
         ERROR("connect");
         close_and_free_remote(EV_A_ remote);
@@ -550,30 +552,39 @@ remote_send_cb(EV_P_ ev_io *w, int revents)
         return;
     } else {
         // has data to send
-        ssize_t s;
+        int s = -1;
+
         if (remote->addr != NULL) {
+#if defined(TCP_FASTOPEN_CONNECT)
+            int optval = 1;
+            if(setsockopt(remote->fd, IPPROTO_TCP, TCP_FASTOPEN_CONNECT,
+                        (void *)&optval, sizeof(optval)) < 0)
+                FATAL("failed to set TCP_FASTOPEN_CONNECT");
+            s = connect(remote->fd, remote->addr, get_sockaddr_len(remote->addr));
+            if (s == 0)
+                s = send(remote->fd, remote->buf->data, remote->buf->len, 0);
+#elif defined(MSG_FASTOPEN)
             s = sendto(remote->fd, remote->buf->data + remote->buf->idx,
                        remote->buf->len, MSG_FASTOPEN, remote->addr,
                        get_sockaddr_len(remote->addr));
-
-            if (s == -1 && (errno == EOPNOTSUPP || errno == EPROTONOSUPPORT ||
-                            errno == ENOPROTOOPT)) {
-                fast_open = 0;
-                LOGE("fast open is not supported on this platform");
-                close_and_free_remote(EV_A_ remote);
-                close_and_free_server(EV_A_ server);
-                return;
-            }
+#else
+            FATAL("tcp fast open is not supported on this platform");
+#endif
 
             remote->addr = NULL;
 
             if (s == -1) {
-                if (errno == CONNECT_IN_PROGRESS || errno == EAGAIN
-                    || errno == EWOULDBLOCK) {
+                if (errno == CONNECT_IN_PROGRESS) {
                     ev_io_start(EV_A_ & remote_send_ctx->io);
                     ev_timer_start(EV_A_ & remote_send_ctx->watcher);
                 } else {
-                    ERROR("connect");
+                    if (errno == EOPNOTSUPP || errno == EPROTONOSUPPORT ||
+                            errno == ENOPROTOOPT) {
+                        fast_open = 0;
+                        LOGE("fast open is not supported on this platform");
+                    } else {
+                        ERROR("fast_open_connect");
+                    }
                     close_and_free_remote(EV_A_ remote);
                     close_and_free_server(EV_A_ server);
                 }
@@ -1225,6 +1236,13 @@ main(int argc, char **argv)
 
     listen_ctx_t *listen_ctx_current = &listen_ctx;
     do {
+
+        if (listen_ctx_current->tos) {
+            LOGI("listening at %s:%s (TOS 0x%x)", local_addr, local_port, listen_ctx_current->tos);
+        } else {
+            LOGI("listening at %s:%s", local_addr, local_port);
+        }
+
         if (mode != UDP_ONLY) {
             // Setup socket
             int listenfd;
@@ -1260,12 +1278,6 @@ main(int argc, char **argv)
 
         if (mode == UDP_ONLY) {
             LOGI("TCP relay disabled");
-        }
-
-        if (listen_ctx_current->tos) {
-            LOGI("listening at %s:%s (TOS 0x%x)", local_addr, local_port, listen_ctx_current->tos);
-        } else {
-            LOGI("listening at %s:%s", local_addr, local_port);
         }
 
         // Handle additionals TOS/DSCP listening ports

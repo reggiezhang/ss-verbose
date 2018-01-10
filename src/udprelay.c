@@ -1293,16 +1293,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
             query_ctx->remote_ctx = remote_ctx;
         }
 
-        struct resolv_query *query = resolv_start(host, htons(atoi(port)),
-                                                  resolv_cb, resolv_free_cb, query_ctx);
-
-        if (query == NULL) {
-            ERROR("[udp] unable to create DNS query");
-            close_and_free_query(EV_A_ query_ctx);
-            goto CLEAN_UP;
-        }
-
-        query_ctx->query = query;
+        resolv_start(host, htons(atoi(port)), resolv_cb, resolv_free_cb, query_ctx);
     }
 #endif
 
@@ -1383,8 +1374,8 @@ void
 free_udprelay()
 {
     struct ev_loop *loop = EV_DEFAULT;
-    while (server_num-- > 0) {
-        server_ctx_t *server_ctx = server_ctx_list[server_num];
+    while (server_num > 0) {
+        server_ctx_t *server_ctx = server_ctx_list[--server_num];
         ev_io_stop(loop, &server_ctx->io);
         close(server_ctx->fd);
         cache_delete(server_ctx->conn_cache, 0);
