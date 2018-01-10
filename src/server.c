@@ -528,15 +528,10 @@ connect_to_remote(EV_P_ struct addrinfo *res,
         s = connectx(sockfd, &endpoints, SAE_ASSOCID_ANY, CONNECT_DATA_IDEMPOTENT,
                          NULL, 0, NULL, NULL);
 #else
-<<<<<<< HEAD
-        ssize_t s = sendto(sockfd, server->buf->data, server->buf->len,
-                MSG_FASTOPEN, res->ai_addr, res->ai_addrlen);
-=======
         FATAL("fast open is not enabled in this build");
 #endif
         if (s == 0)
             s = send(sockfd, server->buf->data, server->buf->len, 0);
->>>>>>> origin/original
 #endif
         if (s == -1) {
             if (errno == CONNECT_IN_PROGRESS) {
@@ -920,21 +915,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
             snprintf(query->hostname, 256, "%s", host);
 
             server->stage = STAGE_RESOLVE;
-<<<<<<< HEAD
-            struct resolv_query *q = resolv_start(host, port,
-                    resolv_cb, resolv_free_cb, query);
-
-            if (q == NULL) {
-                if (query != NULL) ss_free(query);
-                server->query = NULL;
-                close_and_free_server(EV_A_ server);
-                return;
-            }
-
-            ev_io_stop(EV_A_ & server_recv_ctx->io);
-=======
             resolv_start(host, port, resolv_cb, resolv_free_cb, query);
->>>>>>> origin/original
         }
 
         return;
@@ -1884,17 +1865,8 @@ main(int argc, char **argv)
             ev_io_init(&listen_ctx->io, accept_cb, listenfd, EV_READ);
             ev_io_start(loop, &listen_ctx->io);
 
-<<<<<<< HEAD
-            if (host && strcmp(host, ":") > 0)
-                LOGI("tcp server listening at [%s]:%s", host, server_port);
-            else
-                LOGI("tcp server listening at %s:%s", host ? host : "0.0.0.0", server_port);
-
-            if (plugin != NULL) break;
-=======
             if (plugin != NULL)
                 break;
->>>>>>> origin/original
         }
     }
 
