@@ -150,7 +150,7 @@ const char* host_match_to_str(int host_match) {
         if (get_acl_mode == BLACK_LIST) {
             return "accept_all/proxy_all";
         } else {
-            return "reject_all/bypass_all"
+            return "reject_all/bypass_all";
         }
 
     } else {
