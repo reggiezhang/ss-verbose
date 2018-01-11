@@ -134,9 +134,9 @@ static void close_and_free_server(EV_P_ server_t *server);
 static remote_t *new_remote(int fd, int timeout);
 static server_t *new_server(int fd);
 
-static const char  *STR_PROXY_LIST = "proxy/black list";
+static const char  *STR_PROXY_LIST = "proxy/white list";
 static const char  *STR_NOT_MATCH = "not match/default";
-static const char  *STR_BYPASS_LIST = "bypass/white list";
+static const char  *STR_BYPASS_LIST = "bypass/black list";
 
 /*
 * Return 0,  if not match.
@@ -147,7 +147,12 @@ const char* host_match_to_str(int host_match) {
     if (host_match == 1) {
         return STR_BYPASS_LIST;
     } else if (host_match == -1) {
-        return STR_PROXY_LIST;
+        if (get_acl_mode == BLACK_LIST) {
+            return "accept_all/proxy_all";
+        } else {
+            return "reject_all/bypass_all"
+        }
+
     } else {
         return STR_NOT_MATCH;
     }

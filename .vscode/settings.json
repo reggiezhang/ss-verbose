@@ -3,6 +3,12 @@
         ".env": "javascript",
         "cache.h": "c",
         "netutils.h": "c",
-        "utils.h": "c"
+        "utils.h": "c",
+        "__bit_reference": "cpp",
+        "__string": "cpp",
+        "algorithm": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "string_view": "cpp"
     }
 }
