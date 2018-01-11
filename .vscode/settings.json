@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        ".env": "javascript",
+        "cache.h": "c",
+        "netutils.h": "c",
+        "utils.h": "c"
+    }
+}

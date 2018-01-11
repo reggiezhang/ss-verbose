@@ -59,6 +59,7 @@
 #include "tls.h"
 #include "plugin.h"
 #include "local.h"
+#include "cache.h"
 
 #ifndef LIB_ONLY
 #ifdef __APPLE__
