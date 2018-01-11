@@ -5,8 +5,7 @@
 FROM alpine
 MAINTAINER kev <noreply@datageek.info>
 
-ARG SS_VER=1.2.8
-ARG SS_URL=https://github.com/reggiezhang/ss-verbose/archive/v$SS_VER.tar.gz
+ARG SS_URL=https://github.com/reggiezhang/ss-verbose/archive/master.tar.gz
 
 
 ENV SERVER_ADDR 0.0.0.0
