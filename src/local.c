@@ -147,7 +147,7 @@ const char* host_match_to_str(int host_match) {
     if (host_match == 1) {
         return STR_BYPASS_LIST;
     } else if (host_match == -1) {
-        if (get_acl_mode == BLACK_LIST) {
+        if (get_acl_mode() == BLACK_LIST) {
             return "accept_all/proxy_all";
         } else {
             return "reject_all/bypass_all";
