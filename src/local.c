@@ -133,9 +133,26 @@ static void close_and_free_server(EV_P_ server_t *server);
 static remote_t *new_remote(int fd, int timeout);
 static server_t *new_server(int fd);
 
+static const char  *STR_PROXY_LIST = "proxy/black list";
+static const char  *STR_NOT_MATCH = "not match/default";
+static const char  *STR_BYPASS_LIST = "bypass/white list";
+
+/*
+* Return 0,  if not match.
+* Return 1,  if match black list (bypass list).
+* Return -1, if match white list (proxy list).
+*/
+const char* host_match_to_str(int host_match) {
+    if (host_match == 1) {
+        return STR_BYPASS_LIST;
+    } else if (host_match == -1) {
+        return STR_PROXY_LIST;
+    } else {
+        return STR_NOT_MATCH;
+    }
+}
+
 static struct cork_dllist connections;
-
-
 
 static struct cache *dns_cache_list;
 
@@ -723,6 +740,11 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                     close_and_free_server(EV_A_ server);
                     return;
                 }
+                /*
+                * Return 0,  if not match.
+                * Return 1,  if match black list (bypass list).
+                * Return -1, if match white list (proxy list).
+                */
                 int host_match = acl_match_host(host);
                 int bypass = 0;
                 int resolved = 0;
@@ -788,11 +810,11 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                 if (bypass) {
                     if (verbose) {
                         if (sni_detected || atyp == 3)
-                            LOGI("bypass(%d): %s:%s", host_match, host, port);
+                            LOGI("bypass(%d): %s:%s", host_match_to_str(host_match), host, port);
                         else if (atyp == 1)
-                            LOGI("bypass(%d): %s:%s", host_match, ip, port);
+                            LOGI("bypass(%d): %s:%s", host_match_to_str(host_match), ip, port);
                         else if (atyp == 4)
-                            LOGI("bypass(%d): [%s]:%s", host_match, ip, port);
+                            LOGI("bypass(%d): [%s]:%s", host_match_to_str(host_match), ip, port);
                     }
 #ifndef __ANDROID__
                     if (atyp == 3 && resolved != 1)
@@ -808,11 +830,11 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                 } else {
                     if (verbose) {
                         if (sni_detected || atyp == 3)
-                            LOGI("proxying(%d): %s:%s", host_match, host, port);
+                            LOGI("proxying(%d): %s:%s", host_match_to_str(host_match), host, port);
                         else if (atyp == 1)
-                            LOGI("proxying(%d): %s:%s", host_match, ip, port);
+                            LOGI("proxying(%d): %s:%s", host_match_to_str(host_match), ip, port);
                         else if (atyp == 4)
-                            LOGI("proxying(%d): [%s]:%s", host_match, ip, port);
+                            LOGI("proxying(%d): [%s]:%s", host_match_to_str(host_match), ip, port);
                     }
                 }
             }
