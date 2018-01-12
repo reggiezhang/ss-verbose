@@ -807,6 +807,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                                 bypass = 0;               // proxy IPs in white list (proxy list)
                             break;
                     }
+                    host_match = ip_match;
                 }
 
                 if (bypass) {
