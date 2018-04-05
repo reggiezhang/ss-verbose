@@ -162,17 +162,18 @@ am__objects_1 = libshadowsocks_libev_la-crypto.lo \
 	libshadowsocks_libev_la-base64.lo
 am__objects_2 = libshadowsocks_libev_la-plugin.lo
 am__objects_3 = libshadowsocks_libev_la-http.lo \
-	libshadowsocks_libev_la-tls.lo libshadowsocks_libev_la-rule.lo
-am__objects_4 = libshadowsocks_libev_la-utils.lo \
+	libshadowsocks_libev_la-tls.lo
+am__objects_4 = libshadowsocks_libev_la-rule.lo \
+	libshadowsocks_libev_la-acl.lo
+am__objects_5 = libshadowsocks_libev_la-utils.lo \
 	libshadowsocks_libev_la-jconf.lo \
 	libshadowsocks_libev_la-json.lo \
 	libshadowsocks_libev_la-udprelay.lo \
 	libshadowsocks_libev_la-cache.lo \
-	libshadowsocks_libev_la-acl.lo \
 	libshadowsocks_libev_la-netutils.lo \
 	libshadowsocks_libev_la-local.lo $(am__objects_1) \
-	$(am__objects_2) $(am__objects_3)
-am_libshadowsocks_libev_la_OBJECTS = $(am__objects_4)
+	$(am__objects_2) $(am__objects_3) $(am__objects_4)
+am_libshadowsocks_libev_la_OBJECTS = $(am__objects_5)
 libshadowsocks_libev_la_OBJECTS =  \
 	$(am_libshadowsocks_libev_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -185,18 +186,18 @@ libshadowsocks_libev_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libshadowsocks_libev_la_LDFLAGS) $(LDFLAGS) -o $@
 @BUILD_REDIRECTOR_TRUE@am__EXEEXT_1 = ss-redir$(EXEEXT)
 PROGRAMS = $(bin_PROGRAMS)
-am__objects_5 = ss_local-crypto.$(OBJEXT) ss_local-aead.$(OBJEXT) \
+am__objects_6 = ss_local-crypto.$(OBJEXT) ss_local-aead.$(OBJEXT) \
 	ss_local-stream.$(OBJEXT) ss_local-ppbloom.$(OBJEXT) \
 	ss_local-base64.$(OBJEXT)
-am__objects_6 = ss_local-plugin.$(OBJEXT)
-am__objects_7 = ss_local-http.$(OBJEXT) ss_local-tls.$(OBJEXT) \
-	ss_local-rule.$(OBJEXT)
+am__objects_7 = ss_local-plugin.$(OBJEXT)
+am__objects_8 = ss_local-http.$(OBJEXT) ss_local-tls.$(OBJEXT)
+am__objects_9 = ss_local-rule.$(OBJEXT) ss_local-acl.$(OBJEXT)
 am_ss_local_OBJECTS = ss_local-utils.$(OBJEXT) \
 	ss_local-jconf.$(OBJEXT) ss_local-json.$(OBJEXT) \
 	ss_local-udprelay.$(OBJEXT) ss_local-cache.$(OBJEXT) \
-	ss_local-acl.$(OBJEXT) ss_local-netutils.$(OBJEXT) \
-	ss_local-local.$(OBJEXT) $(am__objects_5) $(am__objects_6) \
-	$(am__objects_7)
+	ss_local-netutils.$(OBJEXT) ss_local-local.$(OBJEXT) \
+	$(am__objects_6) $(am__objects_7) $(am__objects_8) \
+	$(am__objects_9)
 ss_local_OBJECTS = $(am_ss_local_OBJECTS)
 ss_local_DEPENDENCIES = $(am__DEPENDENCIES_2)
 ss_local_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -212,13 +213,11 @@ ss_manager_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am__ss_redir_SOURCES_DIST = utils.c jconf.c json.c netutils.c cache.c \
 	udprelay.c redir.c crypto.c aead.c stream.c ppbloom.c base64.c \
-	plugin.c http.c tls.c rule.c
-am__objects_8 = ss_redir-crypto.$(OBJEXT) ss_redir-aead.$(OBJEXT) \
+	plugin.c
+am__objects_10 = ss_redir-crypto.$(OBJEXT) ss_redir-aead.$(OBJEXT) \
 	ss_redir-stream.$(OBJEXT) ss_redir-ppbloom.$(OBJEXT) \
 	ss_redir-base64.$(OBJEXT)
-am__objects_9 = ss_redir-plugin.$(OBJEXT)
-am__objects_10 = ss_redir-http.$(OBJEXT) ss_redir-tls.$(OBJEXT) \
-	ss_redir-rule.$(OBJEXT)
+am__objects_11 = ss_redir-plugin.$(OBJEXT)
 @BUILD_REDIRECTOR_TRUE@am_ss_redir_OBJECTS = ss_redir-utils.$(OBJEXT) \
 @BUILD_REDIRECTOR_TRUE@	ss_redir-jconf.$(OBJEXT) \
 @BUILD_REDIRECTOR_TRUE@	ss_redir-json.$(OBJEXT) \
@@ -226,39 +225,38 @@ am__objects_10 = ss_redir-http.$(OBJEXT) ss_redir-tls.$(OBJEXT) \
 @BUILD_REDIRECTOR_TRUE@	ss_redir-cache.$(OBJEXT) \
 @BUILD_REDIRECTOR_TRUE@	ss_redir-udprelay.$(OBJEXT) \
 @BUILD_REDIRECTOR_TRUE@	ss_redir-redir.$(OBJEXT) \
-@BUILD_REDIRECTOR_TRUE@	$(am__objects_8) $(am__objects_9) \
-@BUILD_REDIRECTOR_TRUE@	$(am__objects_10)
+@BUILD_REDIRECTOR_TRUE@	$(am__objects_10) $(am__objects_11)
 ss_redir_OBJECTS = $(am_ss_redir_OBJECTS)
 @BUILD_REDIRECTOR_TRUE@ss_redir_DEPENDENCIES = $(am__DEPENDENCIES_2)
 ss_redir_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(ss_redir_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_11 = ss_server-crypto.$(OBJEXT) ss_server-aead.$(OBJEXT) \
+am__objects_12 = ss_server-crypto.$(OBJEXT) ss_server-aead.$(OBJEXT) \
 	ss_server-stream.$(OBJEXT) ss_server-ppbloom.$(OBJEXT) \
 	ss_server-base64.$(OBJEXT)
-am__objects_12 = ss_server-plugin.$(OBJEXT)
-am__objects_13 = ss_server-http.$(OBJEXT) ss_server-tls.$(OBJEXT) \
-	ss_server-rule.$(OBJEXT)
+am__objects_13 = ss_server-plugin.$(OBJEXT)
+am__objects_14 = ss_server-http.$(OBJEXT) ss_server-tls.$(OBJEXT)
+am__objects_15 = ss_server-rule.$(OBJEXT) ss_server-acl.$(OBJEXT)
 am_ss_server_OBJECTS = ss_server-utils.$(OBJEXT) \
 	ss_server-netutils.$(OBJEXT) ss_server-jconf.$(OBJEXT) \
 	ss_server-json.$(OBJEXT) ss_server-udprelay.$(OBJEXT) \
-	ss_server-cache.$(OBJEXT) ss_server-acl.$(OBJEXT) \
-	ss_server-resolv.$(OBJEXT) ss_server-server.$(OBJEXT) \
-	$(am__objects_11) $(am__objects_12) $(am__objects_13)
+	ss_server-cache.$(OBJEXT) ss_server-resolv.$(OBJEXT) \
+	ss_server-server.$(OBJEXT) $(am__objects_12) $(am__objects_13) \
+	$(am__objects_14) $(am__objects_15)
 ss_server_OBJECTS = $(am_ss_server_OBJECTS)
 ss_server_DEPENDENCIES = $(am__DEPENDENCIES_2)
 ss_server_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(ss_server_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_14 = ss_tunnel-crypto.$(OBJEXT) ss_tunnel-aead.$(OBJEXT) \
+am__objects_16 = ss_tunnel-crypto.$(OBJEXT) ss_tunnel-aead.$(OBJEXT) \
 	ss_tunnel-stream.$(OBJEXT) ss_tunnel-ppbloom.$(OBJEXT) \
 	ss_tunnel-base64.$(OBJEXT)
-am__objects_15 = ss_tunnel-plugin.$(OBJEXT)
+am__objects_17 = ss_tunnel-plugin.$(OBJEXT)
 am_ss_tunnel_OBJECTS = ss_tunnel-utils.$(OBJEXT) \
 	ss_tunnel-jconf.$(OBJEXT) ss_tunnel-json.$(OBJEXT) \
 	ss_tunnel-udprelay.$(OBJEXT) ss_tunnel-cache.$(OBJEXT) \
 	ss_tunnel-netutils.$(OBJEXT) ss_tunnel-tunnel.$(OBJEXT) \
-	$(am__objects_14) $(am__objects_15)
+	$(am__objects_16) $(am__objects_17)
 ss_tunnel_OBJECTS = $(am_ss_tunnel_OBJECTS)
 ss_tunnel_DEPENDENCIES = $(am__DEPENDENCIES_2)
 ss_tunnel_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -469,8 +467,10 @@ AM_CFLAGS = -g -O2 -Wall -Werror -Wno-deprecated-declarations \
 SS_COMMON_LIBS = $(INET_NTOP_LIB) $(LIBPCRE_LIBS) $(am__append_2) \
 	$(am__append_3) -lev -lsodium -lm
 sni_src = http.c \
-          tls.c \
-          rule.c
+          tls.c
+
+acl_src = rule.c \
+          acl.c
 
 crypto_src = crypto.c \
              aead.c \
@@ -484,12 +484,12 @@ ss_local_SOURCES = utils.c \
                    json.c \
                    udprelay.c \
                    cache.c \
-                   acl.c \
                    netutils.c \
                    local.c \
                    $(crypto_src) \
                    $(plugin_src) \
-                   $(sni_src)
+                   $(sni_src) \
+                   $(acl_src)
 
 ss_tunnel_SOURCES = utils.c \
                     jconf.c \
@@ -507,12 +507,12 @@ ss_server_SOURCES = utils.c \
                     json.c \
                     udprelay.c \
                     cache.c \
-                    acl.c \
                     resolv.c \
                     server.c \
                     $(crypto_src) \
                     $(plugin_src) \
-                    $(sni_src)
+                    $(sni_src) \
+                    ${acl_src}
 
 ss_manager_SOURCES = utils.c \
                      jconf.c \
@@ -537,8 +537,7 @@ ss_manager_CFLAGS = $(AM_CFLAGS) -DMODULE_MANAGER
 @BUILD_REDIRECTOR_TRUE@                   udprelay.c \
 @BUILD_REDIRECTOR_TRUE@                   redir.c \
 @BUILD_REDIRECTOR_TRUE@                   $(crypto_src) \
-@BUILD_REDIRECTOR_TRUE@                   $(plugin_src) \
-@BUILD_REDIRECTOR_TRUE@                   $(sni_src)
+@BUILD_REDIRECTOR_TRUE@                   $(plugin_src)
 
 @BUILD_REDIRECTOR_TRUE@ss_redir_CFLAGS = $(AM_CFLAGS) -DMODULE_REDIR
 @BUILD_REDIRECTOR_TRUE@ss_redir_LDADD = $(SS_COMMON_LIBS) -lcares
@@ -778,16 +777,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-base64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-cache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-crypto.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-http.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-jconf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-json.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-netutils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-plugin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-ppbloom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-redir.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-rule.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-stream.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-tls.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-udprelay.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_redir-utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ss_server-acl.Po@am__quote@
@@ -881,13 +877,6 @@ libshadowsocks_libev_la-cache.lo: cache.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshadowsocks_libev_la_CFLAGS) $(CFLAGS) -c -o libshadowsocks_libev_la-cache.lo `test -f 'cache.c' || echo '$(srcdir)/'`cache.c
 
-libshadowsocks_libev_la-acl.lo: acl.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshadowsocks_libev_la_CFLAGS) $(CFLAGS) -MT libshadowsocks_libev_la-acl.lo -MD -MP -MF $(DEPDIR)/libshadowsocks_libev_la-acl.Tpo -c -o libshadowsocks_libev_la-acl.lo `test -f 'acl.c' || echo '$(srcdir)/'`acl.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshadowsocks_libev_la-acl.Tpo $(DEPDIR)/libshadowsocks_libev_la-acl.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='acl.c' object='libshadowsocks_libev_la-acl.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshadowsocks_libev_la_CFLAGS) $(CFLAGS) -c -o libshadowsocks_libev_la-acl.lo `test -f 'acl.c' || echo '$(srcdir)/'`acl.c
-
 libshadowsocks_libev_la-netutils.lo: netutils.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshadowsocks_libev_la_CFLAGS) $(CFLAGS) -MT libshadowsocks_libev_la-netutils.lo -MD -MP -MF $(DEPDIR)/libshadowsocks_libev_la-netutils.Tpo -c -o libshadowsocks_libev_la-netutils.lo `test -f 'netutils.c' || echo '$(srcdir)/'`netutils.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshadowsocks_libev_la-netutils.Tpo $(DEPDIR)/libshadowsocks_libev_la-netutils.Plo
@@ -965,6 +954,13 @@ libshadowsocks_libev_la-rule.lo: rule.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshadowsocks_libev_la_CFLAGS) $(CFLAGS) -c -o libshadowsocks_libev_la-rule.lo `test -f 'rule.c' || echo '$(srcdir)/'`rule.c
 
+libshadowsocks_libev_la-acl.lo: acl.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshadowsocks_libev_la_CFLAGS) $(CFLAGS) -MT libshadowsocks_libev_la-acl.lo -MD -MP -MF $(DEPDIR)/libshadowsocks_libev_la-acl.Tpo -c -o libshadowsocks_libev_la-acl.lo `test -f 'acl.c' || echo '$(srcdir)/'`acl.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libshadowsocks_libev_la-acl.Tpo $(DEPDIR)/libshadowsocks_libev_la-acl.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='acl.c' object='libshadowsocks_libev_la-acl.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libshadowsocks_libev_la_CFLAGS) $(CFLAGS) -c -o libshadowsocks_libev_la-acl.lo `test -f 'acl.c' || echo '$(srcdir)/'`acl.c
+
 ss_local-utils.o: utils.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_local_CFLAGS) $(CFLAGS) -MT ss_local-utils.o -MD -MP -MF $(DEPDIR)/ss_local-utils.Tpo -c -o ss_local-utils.o `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_local-utils.Tpo $(DEPDIR)/ss_local-utils.Po
@@ -1034,20 +1030,6 @@ ss_local-cache.obj: cache.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cache.c' object='ss_local-cache.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_local_CFLAGS) $(CFLAGS) -c -o ss_local-cache.obj `if test -f 'cache.c'; then $(CYGPATH_W) 'cache.c'; else $(CYGPATH_W) '$(srcdir)/cache.c'; fi`
-
-ss_local-acl.o: acl.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_local_CFLAGS) $(CFLAGS) -MT ss_local-acl.o -MD -MP -MF $(DEPDIR)/ss_local-acl.Tpo -c -o ss_local-acl.o `test -f 'acl.c' || echo '$(srcdir)/'`acl.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_local-acl.Tpo $(DEPDIR)/ss_local-acl.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='acl.c' object='ss_local-acl.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_local_CFLAGS) $(CFLAGS) -c -o ss_local-acl.o `test -f 'acl.c' || echo '$(srcdir)/'`acl.c
-
-ss_local-acl.obj: acl.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_local_CFLAGS) $(CFLAGS) -MT ss_local-acl.obj -MD -MP -MF $(DEPDIR)/ss_local-acl.Tpo -c -o ss_local-acl.obj `if test -f 'acl.c'; then $(CYGPATH_W) 'acl.c'; else $(CYGPATH_W) '$(srcdir)/acl.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_local-acl.Tpo $(DEPDIR)/ss_local-acl.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='acl.c' object='ss_local-acl.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_local_CFLAGS) $(CFLAGS) -c -o ss_local-acl.obj `if test -f 'acl.c'; then $(CYGPATH_W) 'acl.c'; else $(CYGPATH_W) '$(srcdir)/acl.c'; fi`
 
 ss_local-netutils.o: netutils.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_local_CFLAGS) $(CFLAGS) -MT ss_local-netutils.o -MD -MP -MF $(DEPDIR)/ss_local-netutils.Tpo -c -o ss_local-netutils.o `test -f 'netutils.c' || echo '$(srcdir)/'`netutils.c
@@ -1202,6 +1184,20 @@ ss_local-rule.obj: rule.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='rule.c' object='ss_local-rule.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_local_CFLAGS) $(CFLAGS) -c -o ss_local-rule.obj `if test -f 'rule.c'; then $(CYGPATH_W) 'rule.c'; else $(CYGPATH_W) '$(srcdir)/rule.c'; fi`
+
+ss_local-acl.o: acl.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_local_CFLAGS) $(CFLAGS) -MT ss_local-acl.o -MD -MP -MF $(DEPDIR)/ss_local-acl.Tpo -c -o ss_local-acl.o `test -f 'acl.c' || echo '$(srcdir)/'`acl.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_local-acl.Tpo $(DEPDIR)/ss_local-acl.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='acl.c' object='ss_local-acl.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_local_CFLAGS) $(CFLAGS) -c -o ss_local-acl.o `test -f 'acl.c' || echo '$(srcdir)/'`acl.c
+
+ss_local-acl.obj: acl.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_local_CFLAGS) $(CFLAGS) -MT ss_local-acl.obj -MD -MP -MF $(DEPDIR)/ss_local-acl.Tpo -c -o ss_local-acl.obj `if test -f 'acl.c'; then $(CYGPATH_W) 'acl.c'; else $(CYGPATH_W) '$(srcdir)/acl.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_local-acl.Tpo $(DEPDIR)/ss_local-acl.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='acl.c' object='ss_local-acl.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_local_CFLAGS) $(CFLAGS) -c -o ss_local-acl.obj `if test -f 'acl.c'; then $(CYGPATH_W) 'acl.c'; else $(CYGPATH_W) '$(srcdir)/acl.c'; fi`
 
 ss_manager-utils.o: utils.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_manager_CFLAGS) $(CFLAGS) -MT ss_manager-utils.o -MD -MP -MF $(DEPDIR)/ss_manager-utils.Tpo -c -o ss_manager-utils.o `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
@@ -1455,48 +1451,6 @@ ss_redir-plugin.obj: plugin.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_redir_CFLAGS) $(CFLAGS) -c -o ss_redir-plugin.obj `if test -f 'plugin.c'; then $(CYGPATH_W) 'plugin.c'; else $(CYGPATH_W) '$(srcdir)/plugin.c'; fi`
 
-ss_redir-http.o: http.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_redir_CFLAGS) $(CFLAGS) -MT ss_redir-http.o -MD -MP -MF $(DEPDIR)/ss_redir-http.Tpo -c -o ss_redir-http.o `test -f 'http.c' || echo '$(srcdir)/'`http.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_redir-http.Tpo $(DEPDIR)/ss_redir-http.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='http.c' object='ss_redir-http.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_redir_CFLAGS) $(CFLAGS) -c -o ss_redir-http.o `test -f 'http.c' || echo '$(srcdir)/'`http.c
-
-ss_redir-http.obj: http.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_redir_CFLAGS) $(CFLAGS) -MT ss_redir-http.obj -MD -MP -MF $(DEPDIR)/ss_redir-http.Tpo -c -o ss_redir-http.obj `if test -f 'http.c'; then $(CYGPATH_W) 'http.c'; else $(CYGPATH_W) '$(srcdir)/http.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_redir-http.Tpo $(DEPDIR)/ss_redir-http.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='http.c' object='ss_redir-http.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_redir_CFLAGS) $(CFLAGS) -c -o ss_redir-http.obj `if test -f 'http.c'; then $(CYGPATH_W) 'http.c'; else $(CYGPATH_W) '$(srcdir)/http.c'; fi`
-
-ss_redir-tls.o: tls.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_redir_CFLAGS) $(CFLAGS) -MT ss_redir-tls.o -MD -MP -MF $(DEPDIR)/ss_redir-tls.Tpo -c -o ss_redir-tls.o `test -f 'tls.c' || echo '$(srcdir)/'`tls.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_redir-tls.Tpo $(DEPDIR)/ss_redir-tls.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tls.c' object='ss_redir-tls.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_redir_CFLAGS) $(CFLAGS) -c -o ss_redir-tls.o `test -f 'tls.c' || echo '$(srcdir)/'`tls.c
-
-ss_redir-tls.obj: tls.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_redir_CFLAGS) $(CFLAGS) -MT ss_redir-tls.obj -MD -MP -MF $(DEPDIR)/ss_redir-tls.Tpo -c -o ss_redir-tls.obj `if test -f 'tls.c'; then $(CYGPATH_W) 'tls.c'; else $(CYGPATH_W) '$(srcdir)/tls.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_redir-tls.Tpo $(DEPDIR)/ss_redir-tls.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tls.c' object='ss_redir-tls.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_redir_CFLAGS) $(CFLAGS) -c -o ss_redir-tls.obj `if test -f 'tls.c'; then $(CYGPATH_W) 'tls.c'; else $(CYGPATH_W) '$(srcdir)/tls.c'; fi`
-
-ss_redir-rule.o: rule.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_redir_CFLAGS) $(CFLAGS) -MT ss_redir-rule.o -MD -MP -MF $(DEPDIR)/ss_redir-rule.Tpo -c -o ss_redir-rule.o `test -f 'rule.c' || echo '$(srcdir)/'`rule.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_redir-rule.Tpo $(DEPDIR)/ss_redir-rule.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='rule.c' object='ss_redir-rule.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_redir_CFLAGS) $(CFLAGS) -c -o ss_redir-rule.o `test -f 'rule.c' || echo '$(srcdir)/'`rule.c
-
-ss_redir-rule.obj: rule.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_redir_CFLAGS) $(CFLAGS) -MT ss_redir-rule.obj -MD -MP -MF $(DEPDIR)/ss_redir-rule.Tpo -c -o ss_redir-rule.obj `if test -f 'rule.c'; then $(CYGPATH_W) 'rule.c'; else $(CYGPATH_W) '$(srcdir)/rule.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_redir-rule.Tpo $(DEPDIR)/ss_redir-rule.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='rule.c' object='ss_redir-rule.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_redir_CFLAGS) $(CFLAGS) -c -o ss_redir-rule.obj `if test -f 'rule.c'; then $(CYGPATH_W) 'rule.c'; else $(CYGPATH_W) '$(srcdir)/rule.c'; fi`
-
 ss_server-utils.o: utils.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -MT ss_server-utils.o -MD -MP -MF $(DEPDIR)/ss_server-utils.Tpo -c -o ss_server-utils.o `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_server-utils.Tpo $(DEPDIR)/ss_server-utils.Po
@@ -1580,20 +1534,6 @@ ss_server-cache.obj: cache.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cache.c' object='ss_server-cache.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -c -o ss_server-cache.obj `if test -f 'cache.c'; then $(CYGPATH_W) 'cache.c'; else $(CYGPATH_W) '$(srcdir)/cache.c'; fi`
-
-ss_server-acl.o: acl.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -MT ss_server-acl.o -MD -MP -MF $(DEPDIR)/ss_server-acl.Tpo -c -o ss_server-acl.o `test -f 'acl.c' || echo '$(srcdir)/'`acl.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_server-acl.Tpo $(DEPDIR)/ss_server-acl.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='acl.c' object='ss_server-acl.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -c -o ss_server-acl.o `test -f 'acl.c' || echo '$(srcdir)/'`acl.c
-
-ss_server-acl.obj: acl.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -MT ss_server-acl.obj -MD -MP -MF $(DEPDIR)/ss_server-acl.Tpo -c -o ss_server-acl.obj `if test -f 'acl.c'; then $(CYGPATH_W) 'acl.c'; else $(CYGPATH_W) '$(srcdir)/acl.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_server-acl.Tpo $(DEPDIR)/ss_server-acl.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='acl.c' object='ss_server-acl.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -c -o ss_server-acl.obj `if test -f 'acl.c'; then $(CYGPATH_W) 'acl.c'; else $(CYGPATH_W) '$(srcdir)/acl.c'; fi`
 
 ss_server-resolv.o: resolv.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -MT ss_server-resolv.o -MD -MP -MF $(DEPDIR)/ss_server-resolv.Tpo -c -o ss_server-resolv.o `test -f 'resolv.c' || echo '$(srcdir)/'`resolv.c
@@ -1748,6 +1688,20 @@ ss_server-rule.obj: rule.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='rule.c' object='ss_server-rule.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -c -o ss_server-rule.obj `if test -f 'rule.c'; then $(CYGPATH_W) 'rule.c'; else $(CYGPATH_W) '$(srcdir)/rule.c'; fi`
+
+ss_server-acl.o: acl.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -MT ss_server-acl.o -MD -MP -MF $(DEPDIR)/ss_server-acl.Tpo -c -o ss_server-acl.o `test -f 'acl.c' || echo '$(srcdir)/'`acl.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_server-acl.Tpo $(DEPDIR)/ss_server-acl.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='acl.c' object='ss_server-acl.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -c -o ss_server-acl.o `test -f 'acl.c' || echo '$(srcdir)/'`acl.c
+
+ss_server-acl.obj: acl.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -MT ss_server-acl.obj -MD -MP -MF $(DEPDIR)/ss_server-acl.Tpo -c -o ss_server-acl.obj `if test -f 'acl.c'; then $(CYGPATH_W) 'acl.c'; else $(CYGPATH_W) '$(srcdir)/acl.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ss_server-acl.Tpo $(DEPDIR)/ss_server-acl.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='acl.c' object='ss_server-acl.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_server_CFLAGS) $(CFLAGS) -c -o ss_server-acl.obj `if test -f 'acl.c'; then $(CYGPATH_W) 'acl.c'; else $(CYGPATH_W) '$(srcdir)/acl.c'; fi`
 
 ss_tunnel-utils.o: utils.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(ss_tunnel_CFLAGS) $(CFLAGS) -MT ss_tunnel-utils.o -MD -MP -MF $(DEPDIR)/ss_tunnel-utils.Tpo -c -o ss_tunnel-utils.o `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
