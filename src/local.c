@@ -757,10 +757,6 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                 memset(&storage, 0, sizeof(struct sockaddr_storage));
                 int err;
 
-                int host_match = 0;
-                if (sni_detected || atyp == 3)
-                    host_match = acl_match_host(host);
-
                 if (host_match > 0)
                     bypass = 1;                 // bypass hostnames in black list (bypass list)
                 else if (host_match < 0)
