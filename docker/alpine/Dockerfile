@@ -3,10 +3,8 @@
 #
 
 FROM alpine
-MAINTAINER kev <noreply@datageek.info>
 
 ARG SS_URL=https://github.com/reggiezhang/ss-verbose/archive/master.tar.gz
-
 
 ENV SERVER_ADDR 0.0.0.0
 ENV SERVER_PORT 8388
