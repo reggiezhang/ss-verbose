@@ -121,6 +121,12 @@ build_config(char *prefix, struct manager_ctx *manager, struct server *server)
         fprintf(f, ",\n\"method\":\"%s\"", manager->method);
     if (server->fast_open[0])
         fprintf(f, ",\n\"fast_open\": %s", server->fast_open);
+    else if (manager->fast_open)
+        fprintf(f, ",\n\"fast_open\": true");
+    if (server->no_delay[0])
+        fprintf(f, ",\n\"no_delay\": %s", server->no_delay);
+    else if (manager->no_delay)
+        fprintf(f, ",\n\"no_delay\": true");
     if (server->mode)
         fprintf(f, ",\n\"mode\":\"%s\"", server->mode);
     if (server->plugin)
@@ -181,6 +187,10 @@ construct_command_line(struct manager_ctx *manager, struct server *server)
     if (server->fast_open[0] == 0 && manager->fast_open) {
         int len = strlen(cmd);
         snprintf(cmd + len, BUF_SIZE - len, " --fast-open");
+    }
+    if (server->no_delay[0] == 0 && manager->no_delay) {
+        int len = strlen(cmd);
+        snprintf(cmd + len, BUF_SIZE - len, " --no-delay");
     }
     if (manager->ipv6first) {
         int len = strlen(cmd);
@@ -278,13 +288,13 @@ get_server(char *buf, int len)
             json_value *value = obj->u.object.values[i].value;
             if (strcmp(name, "server_port") == 0) {
                 if (value->type == json_string) {
-                    strncpy(server->port, value->u.string.ptr, 8);
+                    strncpy(server->port, value->u.string.ptr, 7);
                 } else if (value->type == json_integer) {
                     snprintf(server->port, 8, "%" PRIu64 "", value->u.integer);
                 }
             } else if (strcmp(name, "password") == 0) {
                 if (value->type == json_string) {
-                    strncpy(server->password, value->u.string.ptr, 128);
+                    strncpy(server->password, value->u.string.ptr, 127);
                 }
             } else if (strcmp(name, "method") == 0) {
                 if (value->type == json_string) {
@@ -293,6 +303,10 @@ get_server(char *buf, int len)
             } else if (strcmp(name, "fast_open") == 0) {
                 if (value->type == json_boolean) {
                     strncpy(server->fast_open, (value->u.boolean ? "true" : "false"), 8);
+                }
+            } else if (strcmp(name, "no_delay") == 0) {
+                if (value->type == json_boolean) {
+                    strncpy(server->no_delay, (value->u.boolean ? "true" : "false"), 8);
                 }
             } else if (strcmp(name, "plugin") == 0) {
                 if (value->type == json_string) {
@@ -341,7 +355,7 @@ parse_traffic(char *buf, int len, char *port, uint64_t *traffic)
             char *name        = obj->u.object.values[i].name;
             json_value *value = obj->u.object.values[i].value;
             if (value->type == json_integer) {
-                strncpy(port, name, 8);
+                strncpy(port, name, 7);
                 *traffic = value->u.integer;
             }
         }
@@ -844,6 +858,7 @@ main(int argc, char **argv)
     char *plugin_opts     = NULL;
 
     int fast_open  = 0;
+    int no_delay   = 0;
     int reuse_port = 0;
     int mode       = TCP_ONLY;
     int mtu        = 0;
@@ -863,6 +878,7 @@ main(int argc, char **argv)
 
     static struct option long_options[] = {
         { "fast-open",       no_argument,       NULL, GETOPT_VAL_FAST_OPEN   },
+        { "no-delay",        no_argument,       NULL, GETOPT_VAL_NODELAY     },
         { "reuse-port",      no_argument,       NULL, GETOPT_VAL_REUSE_PORT  },
         { "acl",             required_argument, NULL, GETOPT_VAL_ACL         },
         { "manager-address", required_argument, NULL,
@@ -889,6 +905,9 @@ main(int argc, char **argv)
             break;
         case GETOPT_VAL_FAST_OPEN:
             fast_open = 1;
+            break;
+        case GETOPT_VAL_NODELAY:
+            no_delay = 1;
             break;
         case GETOPT_VAL_ACL:
             acl = optarg;
@@ -999,6 +1018,9 @@ main(int argc, char **argv)
         if (fast_open == 0) {
             fast_open = conf->fast_open;
         }
+        if (no_delay == 0) {
+            no_delay = conf->no_delay;
+        }
         if (reuse_port == 0) {
             reuse_port = conf->reuse_port;
         }
@@ -1062,6 +1084,10 @@ main(int argc, char **argv)
 #endif
     }
 
+    if (no_delay == 1) {
+        LOGI("using tcp no-delay");
+    }
+
     // ignore SIGPIPE
     signal(SIGPIPE, SIG_IGN);
     signal(SIGCHLD, SIG_IGN);
@@ -1079,6 +1105,7 @@ main(int argc, char **argv)
 
     manager.reuse_port      = reuse_port;
     manager.fast_open       = fast_open;
+    manager.no_delay        = no_delay;
     manager.verbose         = verbose;
     manager.mode            = mode;
     manager.password        = password;
@@ -1145,8 +1172,8 @@ main(int argc, char **argv)
         for (i = 0; i < conf->port_password_num; i++) {
             struct server *server = ss_malloc(sizeof(struct server));
             memset(server, 0, sizeof(struct server));
-            strncpy(server->port, conf->port_password[i].port, 8);
-            strncpy(server->password, conf->port_password[i].password, 128);
+            strncpy(server->port, conf->port_password[i].port, 7);
+            strncpy(server->password, conf->port_password[i].password, 127);
             add_server(&manager, server);
         }
     }

@@ -29,13 +29,13 @@
 #include <strings.h>
 #include <time.h>
 #include <unistd.h>
-
+#ifndef __MINGW32__
 #include <arpa/inet.h>
 #include <errno.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <pthread.h>
-
+#endif
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -52,6 +52,7 @@
 #include "netutils.h"
 #include "cache.h"
 #include "udprelay.h"
+#include "winsock.h"
 
 #ifdef MODULE_REMOTE
 #define MAX_UDP_CONN_NUM 512
@@ -97,6 +98,7 @@ extern int reuse_port;
 #ifdef MODULE_REMOTE
 extern uint64_t tx;
 extern uint64_t rx;
+extern char *local_addr;
 #endif
 
 static int packet_size                               = DEFAULT_PACKET_SIZE;
@@ -104,6 +106,7 @@ static int buf_size                                  = DEFAULT_PACKET_SIZE * 2;
 static int server_num                                = 0;
 static server_ctx_t *server_ctx_list[MAX_REMOTE_NUM] = { NULL };
 
+#ifndef __MINGW32__
 static int
 setnonblocking(int fd)
 {
@@ -113,6 +116,7 @@ setnonblocking(int fd)
     }
     return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
+#endif
 
 #if defined(MODULE_REMOTE) && defined(SO_BROADCAST)
 static int
@@ -358,10 +362,22 @@ create_remote_socket(int ipv6)
             ERROR("[udp] cannot create socket");
             return -1;
         }
-        if (bind(remote_sock, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
-            FATAL("[udp] cannot bind remote");
-            return -1;
+#ifdef MODULE_REMOTE
+        if (local_addr != NULL) {
+            if (bind_to_address(remote_sock, local_addr) == -1) {
+                ERROR("bind_to_address");
+                FATAL("[udp] cannot bind remote");
+                return -1;
+            }
+        } else {
+#endif
+            if (bind(remote_sock, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
+                FATAL("[udp] cannot bind remote");
+                return -1;
+            }
+#ifdef MODULE_REMOTE
         }
+#endif
     } else {
         // Or else bind to IPv4
         struct sockaddr_in addr;
@@ -374,11 +390,22 @@ create_remote_socket(int ipv6)
             ERROR("[udp] cannot create socket");
             return -1;
         }
-
-        if (bind(remote_sock, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
-            FATAL("[udp] cannot bind remote");
-            return -1;
+#ifdef MODULE_REMOTE
+        if (local_addr != NULL) {
+            if (bind_to_address(remote_sock, local_addr) == -1) {
+                ERROR("bind_to_address");
+                FATAL("[udp] cannot bind remote");
+                return -1;
+            }
+        } else {
+#endif
+            if (bind(remote_sock, (struct sockaddr *)&addr, sizeof(addr)) != 0) {
+                FATAL("[udp] cannot bind remote");
+                return -1;
+            }
+#ifdef MODULE_REMOTE
         }
+#endif
     }
     return remote_sock;
 }
@@ -700,7 +727,7 @@ remote_recv_cb(EV_P_ ev_io *w, int revents)
         goto CLEAN_UP;
     } else if (r > packet_size) {
         if (verbose) {
-            LOGI("[udp] remote_recv_recvfrom fragmentation");
+            LOGI("[udp] remote_recv_recvfrom fragmentation, MTU at least be: " SSIZE_FMT, r + PACKET_HEADER_SIZE);
         }
     }
 
@@ -774,7 +801,7 @@ remote_recv_cb(EV_P_ ev_io *w, int revents)
 
     if (buf->len > packet_size) {
         if (verbose) {
-            LOGI("[udp] remote_recv_sendto fragmentation");
+            LOGI("[udp] remote_recv_sendto fragmentation, MTU at least be: " SSIZE_FMT, buf->len + PACKET_HEADER_SIZE);
         }
     }
 
@@ -878,7 +905,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
         goto CLEAN_UP;
     } else if (buf->len > packet_size) {
         if (verbose) {
-            LOGI("[udp] UDP server_recv_recvmsg fragmentation");
+            LOGI("[udp] UDP server_recv_recvmsg fragmentation, MTU at least be: " SSIZE_FMT, buf->len + PACKET_HEADER_SIZE);
         }
     }
 
@@ -900,7 +927,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
         goto CLEAN_UP;
     } else if (r > packet_size) {
         if (verbose) {
-            LOGI("[udp] server_recv_recvfrom fragmentation");
+            LOGI("[udp] server_recv_recvfrom fragmentation, MTU at least be: " SSIZE_FMT, r + PACKET_HEADER_SIZE);
         }
     }
 
@@ -1184,7 +1211,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
 
     if (buf->len > packet_size) {
         if (verbose) {
-            LOGI("[udp] server_recv_sendto fragmentation");
+            LOGI("[udp] server_recv_sendto fragmentation, MTU at least be: " SSIZE_FMT, buf->len + PACKET_HEADER_SIZE);
         }
     }
 
@@ -1201,7 +1228,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
 
     if (buf->len - addr_header_len > packet_size) {
         if (verbose) {
-            LOGI("[udp] server_recv_sendto fragmentation");
+            LOGI("[udp] server_recv_sendto fragmentation, MTU at least be: " SSIZE_FMT, buf->len - addr_header_len + PACKET_HEADER_SIZE);
         }
     }
 
@@ -1321,7 +1348,7 @@ init_udprelay(const char *server_host, const char *server_port,
 
     // Initialize MTU
     if (mtu > 0) {
-        packet_size = mtu - 1 - 28 - 2 - 64;
+        packet_size = mtu - PACKET_HEADER_SIZE;
         buf_size    = packet_size * 2;
     }
 

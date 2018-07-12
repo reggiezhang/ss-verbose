@@ -28,10 +28,12 @@
 #include "config.h"
 #endif
 
+#ifndef __MINGW32__
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#endif
 
 #if defined(HAVE_SYS_IOCTL_H) && defined(HAVE_NET_IF_H) && defined(__linux__)
 #include <net/if.h>
@@ -79,7 +81,7 @@ setinterface(int socket_fd, const char *interface_name)
 {
     struct ifreq interface;
     memset(&interface, 0, sizeof(struct ifreq));
-    strncpy(interface.ifr_name, interface_name, IFNAMSIZ);
+    strncpy(interface.ifr_name, interface_name, IFNAMSIZ-1);
     int res = setsockopt(socket_fd, SOL_SOCKET, SO_BINDTODEVICE, &interface,
                          sizeof(struct ifreq));
     return res;
@@ -90,10 +92,14 @@ setinterface(int socket_fd, const char *interface_name)
 int
 bind_to_address(int socket_fd, const char *host)
 {
-    if (host != NULL) {
+    static struct sockaddr_storage storage = {0};
+    if (storage.ss_family == AF_INET) {
+        return bind(socket_fd, (struct sockaddr *)&storage, sizeof(struct sockaddr_in));
+    }
+    else if (storage.ss_family == AF_INET6) {
+        return bind(socket_fd, (struct sockaddr *)&storage, sizeof(struct sockaddr_in6));
+    } else if (host != NULL) {
         struct cork_ip ip;
-        struct sockaddr_storage storage;
-        memset(&storage, 0, sizeof(struct sockaddr_storage));
         if (cork_ip_init(&ip, host) != -1) {
             if (ip.version == 4) {
                 struct sockaddr_in *addr = (struct sockaddr_in *)&storage;

@@ -88,6 +88,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@BUILD_WINCOMPAT_FALSE@am__append_1 = src/libcork/posix/subprocess.c src/libcork/pthreads/thread.c
+@BUILD_WINCOMPAT_TRUE@am__append_2 = src/libcork/posix/mingw.c
 subdir = libcork
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_pthread.m4 \
@@ -107,6 +109,20 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 LTLIBRARIES = $(noinst_LTLIBRARIES)
 libcork_la_LIBADD =
+am__libcork_la_SOURCES_DIST = src/libcork/cli/commands.c \
+	src/libcork/core/allocator.c src/libcork/core/error.c \
+	src/libcork/core/gc.c src/libcork/core/hash.c \
+	src/libcork/core/ip-address.c src/libcork/core/mempool.c \
+	src/libcork/core/timestamp.c src/libcork/core/u128.c \
+	src/libcork/ds/array.c src/libcork/ds/bitset.c \
+	src/libcork/ds/buffer.c src/libcork/ds/dllist.c \
+	src/libcork/ds/file-stream.c src/libcork/ds/hash-table.c \
+	src/libcork/ds/managed-buffer.c src/libcork/ds/ring-buffer.c \
+	src/libcork/ds/slice.c src/libcork/posix/directory-walker.c \
+	src/libcork/posix/env.c src/libcork/posix/exec.c \
+	src/libcork/posix/files.c src/libcork/posix/process.c \
+	src/libcork/posix/subprocess.c src/libcork/pthreads/thread.c \
+	src/libcork/posix/mingw.c
 am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = src/libcork/cli/libcork_la-commands.lo
 am__objects_2 = src/libcork/core/libcork_la-allocator.lo \
@@ -126,15 +142,18 @@ am__objects_3 = src/libcork/ds/libcork_la-array.lo \
 	src/libcork/ds/libcork_la-managed-buffer.lo \
 	src/libcork/ds/libcork_la-ring-buffer.lo \
 	src/libcork/ds/libcork_la-slice.lo
-am__objects_4 = src/libcork/posix/libcork_la-directory-walker.lo \
+@BUILD_WINCOMPAT_FALSE@am__objects_4 = src/libcork/posix/libcork_la-subprocess.lo \
+@BUILD_WINCOMPAT_FALSE@	src/libcork/pthreads/libcork_la-thread.lo
+@BUILD_WINCOMPAT_TRUE@am__objects_5 =  \
+@BUILD_WINCOMPAT_TRUE@	src/libcork/posix/libcork_la-mingw.lo
+am__objects_6 = src/libcork/posix/libcork_la-directory-walker.lo \
 	src/libcork/posix/libcork_la-env.lo \
 	src/libcork/posix/libcork_la-exec.lo \
 	src/libcork/posix/libcork_la-files.lo \
-	src/libcork/posix/libcork_la-process.lo \
-	src/libcork/posix/libcork_la-subprocess.lo \
-	src/libcork/pthreads/libcork_la-thread.lo
+	src/libcork/posix/libcork_la-process.lo $(am__objects_4) \
+	$(am__objects_5)
 am_libcork_la_OBJECTS = $(am__objects_1) $(am__objects_2) \
-	$(am__objects_3) $(am__objects_4)
+	$(am__objects_3) $(am__objects_6)
 libcork_la_OBJECTS = $(am_libcork_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -178,7 +197,7 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libcork_la_SOURCES)
-DIST_SOURCES = $(libcork_la_SOURCES)
+DIST_SOURCES = $(am__libcork_la_SOURCES_DIST)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -349,7 +368,7 @@ ds_src = src/libcork/ds/array.c src/libcork/ds/bitset.c src/libcork/ds/buffer.c 
 posix_src = src/libcork/posix/directory-walker.c \
 	src/libcork/posix/env.c src/libcork/posix/exec.c \
 	src/libcork/posix/files.c src/libcork/posix/process.c \
-	src/libcork/posix/subprocess.c src/libcork/pthreads/thread.c
+	$(am__append_1) $(am__append_2)
 libcork_la_SOURCES = $(cli_src) $(core_src) $(ds_src) $(pthreads_src) $(posix_src)
 libcork_la_CFLAGS = -I$(top_srcdir)/libcork/include -DCORK_API=CORK_LOCAL
 libcork_la_LDFLAGS = -static
@@ -494,6 +513,9 @@ src/libcork/pthreads/$(DEPDIR)/$(am__dirstamp):
 src/libcork/pthreads/libcork_la-thread.lo:  \
 	src/libcork/pthreads/$(am__dirstamp) \
 	src/libcork/pthreads/$(DEPDIR)/$(am__dirstamp)
+src/libcork/posix/libcork_la-mingw.lo:  \
+	src/libcork/posix/$(am__dirstamp) \
+	src/libcork/posix/$(DEPDIR)/$(am__dirstamp)
 
 libcork.la: $(libcork_la_OBJECTS) $(libcork_la_DEPENDENCIES) $(EXTRA_libcork_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libcork_la_LINK)  $(libcork_la_OBJECTS) $(libcork_la_LIBADD) $(LIBS)
@@ -536,6 +558,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/libcork/posix/$(DEPDIR)/libcork_la-env.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/libcork/posix/$(DEPDIR)/libcork_la-exec.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/libcork/posix/$(DEPDIR)/libcork_la-files.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/libcork/posix/$(DEPDIR)/libcork_la-mingw.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/libcork/posix/$(DEPDIR)/libcork_la-process.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/libcork/posix/$(DEPDIR)/libcork_la-subprocess.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/libcork/pthreads/$(DEPDIR)/libcork_la-thread.Plo@am__quote@
@@ -738,6 +761,13 @@ src/libcork/pthreads/libcork_la-thread.lo: src/libcork/pthreads/thread.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/libcork/pthreads/thread.c' object='src/libcork/pthreads/libcork_la-thread.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcork_la_CFLAGS) $(CFLAGS) -c -o src/libcork/pthreads/libcork_la-thread.lo `test -f 'src/libcork/pthreads/thread.c' || echo '$(srcdir)/'`src/libcork/pthreads/thread.c
+
+src/libcork/posix/libcork_la-mingw.lo: src/libcork/posix/mingw.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcork_la_CFLAGS) $(CFLAGS) -MT src/libcork/posix/libcork_la-mingw.lo -MD -MP -MF src/libcork/posix/$(DEPDIR)/libcork_la-mingw.Tpo -c -o src/libcork/posix/libcork_la-mingw.lo `test -f 'src/libcork/posix/mingw.c' || echo '$(srcdir)/'`src/libcork/posix/mingw.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/libcork/posix/$(DEPDIR)/libcork_la-mingw.Tpo src/libcork/posix/$(DEPDIR)/libcork_la-mingw.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/libcork/posix/mingw.c' object='src/libcork/posix/libcork_la-mingw.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libcork_la_CFLAGS) $(CFLAGS) -c -o src/libcork/posix/libcork_la-mingw.lo `test -f 'src/libcork/posix/mingw.c' || echo '$(srcdir)/'`src/libcork/posix/mingw.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
